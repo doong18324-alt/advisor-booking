@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>상담 예약 관리자</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+:root {
+  --bg: #1A2433;
+  --surface: #243044;
+  --surface-2: #2C3A52;
+  --ink: #F2F0EA;
+  --ink-soft: #B8BFCC;
+  --ink-mute: #7C8699;
+  --line: #354460;
+  --accent: #6FBE9F;
+  --accent-deep: #4A9277;
+  --gold: #D4A85F;
+  --warn: #E8A658;
+  --danger: #E07878;
+  --serif: 'Fraunces', 'Noto Serif KR', serif;
+  --sans: 'Pretendard', -apple-system, sans-serif;
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select, textarea { font-family: inherit; }
+
+.shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* Header */
+.brand {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+}
+.brand h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 26px;
+  margin: 0 0 4px;
+  letter-spacing: -0.005em;
+}
+.brand p {
+  font-size: 12px;
+  color: var(--ink-mute);
+  margin: 0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.brand .right {
+  text-align: right;
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Login screen */
+.login-shell {
+  max-width: 420px;
+  margin: 100px auto;
+  padding: 40px 32px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+}
+.login-shell h2 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0 0 24px;
+  text-align: center;
+}
+.login-shell input {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+.login-shell button {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+}
+.login-shell .err {
+  color: var(--danger);
+  font-size: 12px;
+  text-align: center;
+  margin-top: 8px;
+  height: 16px;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 28px;
+  gap: 0;
+}
+.tab {
+  background: transparent;
+  border: none;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--ink-mute);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.tab:hover { color: var(--ink-soft); }
+.tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 500;
+}
+
+/* Stat cards */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--ink-mute);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.stat-value {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.stat-sub {
+  font-size: 11px;
+  color: var(--gold);
+  margin-top: 4px;
+}
+
+/* Section panel */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.panel h3 {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+.panel .sub {
+  font-size: 12px;
+  color: var(--ink-mute);
+  margin: 0 0 18px;
+}
+
+/* Slot creation form */
+.slot-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  gap: 8px;
+  align-items: end;
+  margin-bottom: 12px;
+}
+.slot-form label {
+  display: block;
+  font-size: 11px;
+  color: var(--ink-mute);
+  margin-bottom: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.slot-form input, .slot-form select {
+  width: 100%;
+  padding: 9px 11px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+}
+.slot-form button {
+  padding: 9px 18px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.slot-form button:hover { background: var(--accent-deep); color: var(--ink); }
+
+.bulk-form {
+  background: var(--surface-2);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-top: 12px;
+}
+.bulk-form summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink-soft);
+  user-select: none;
+}
+.bulk-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.bulk-grid > div { grid-column: span 1; }
+.bulk-grid .full { grid-column: span 4; }
+.weekday-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.wd-chip {
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink-mute);
+  cursor: pointer;
+  font-size: 12px;
+}
+.wd-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+  font-weight: 500;
+}
+
+/* Slot list */
+.slot-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.slot-table th, .slot-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+.slot-table th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+  font-weight: 500;
+}
+.slot-table tr:hover td { background: var(--surface-2); }
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.badge.open { background: rgba(111, 190, 159, 0.18); color: var(--accent); }
+.badge.taken { background: rgba(224, 120, 120, 0.18); color: var(--danger); }
+.del-btn {
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink-mute);
+  cursor: pointer;
+  font-size: 12px;
+}
+.del-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+/* Bookings table */
+.filter-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.filter-row input, .filter-row select {
+  padding: 8px 11px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font-size: 13px;
+}
+.filter-row input { flex: 1; min-width: 140px; }
+
+.export-btn {
+  padding: 8px 14px;
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.bookings-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.bookings-table th, .bookings-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.bookings-table th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+}
+.bookings-table tr:hover td { background: var(--surface-2); }
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-right: 4px;
+  background: var(--surface-2);
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+}
+.tag.solo { background: rgba(111, 190, 159, 0.15); color: var(--accent); border-color: var(--accent-deep); }
+.tag.group { background: rgba(212, 168, 95, 0.15); color: var(--gold); border-color: var(--gold); }
+
+.empty {
+  text-align: center;
+  padding: 48px;
+  color: var(--ink-mute);
+  font-style: italic;
+  font-family: var(--serif);
+}
+
+.toast {
+  position: fixed;
+  bottom: 32px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 999;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.error { background: var(--danger); color: #fff; }
+.toast.success { background: var(--accent); color: var(--bg); }
+
+@media (max-width: 700px) {
+  .slot-form { grid-template-columns: 1fr 1fr; }
+  .slot-form button { grid-column: span 2; }
+  .bulk-grid { grid-template-columns: 1fr 1fr; }
+  .bulk-grid .full { grid-column: span 2; }
+}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="login" class="login-shell">
+  <h2>관리자 로그인</h2>
+  <input type="password" id="pw-input" placeholder="관리자 비밀번호" autocomplete="off" />
+  <button id="pw-btn">로그인</button>
+  <p class="err" id="pw-err"></p>
+</div>
+
+<!-- App -->
+<div id="app" class="shell" style="display:none;">
+
+  <header class="brand">
+    <div>
+      <h1>상담 예약 관리</h1>
+      <p>Lifelong Advisor · Admin Console</p>
+    </div>
+    <div class="right">
+      <div>광주보건대학교 운동처방학과</div>
+      <button id="logout" style="margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--ink-mute);padding:6px 12px;border-radius:var(--radius);cursor:pointer;font-size:11px;">로그아웃</button>
+    </div>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="slots">시간 슬롯 관리</button>
+    <button class="tab" data-tab="bookings">예약 현황</button>
+  </nav>
+
+  <!-- Slots tab -->
+  <section id="tab-slots">
+
+    <div class="panel">
+      <h3>새 시간 슬롯 추가</h3>
+      <p class="sub">단일 등록 또는 일괄 등록 (요일 반복) 가능</p>
+
+      <div class="slot-form">
+        <div>
+          <label>날짜</label>
+          <input type="date" id="single-date" />
+        </div>
+        <div>
+          <label>시작 시각</label>
+          <input type="time" id="single-start" value="10:00" step="600" />
+        </div>
+        <div>
+          <label>종료 시각</label>
+          <input type="time" id="single-end" value="11:00" step="600" />
+        </div>
+        <div>
+          <label>슬롯 길이</label>
+          <select id="single-len">
+            <option value="20">20분</option>
+            <option value="30">30분</option>
+            <option value="40">40분</option>
+            <option value="60">60분</option>
+          </select>
+        </div>
+        <button id="add-single">단일 등록</button>
+      </div>
+
+      <details class="bulk-form">
+        <summary>요일 반복 일괄 등록</summary>
+        <div class="bulk-grid">
+          <div>
+            <label>시작 날짜</label>
+            <input type="date" id="bulk-from" />
+          </div>
+          <div>
+            <label>종료 날짜</label>
+            <input type="date" id="bulk-to" />
+          </div>
+          <div>
+            <label>시작 시각</label>
+            <input type="time" id="bulk-start" value="10:00" step="600" />
+          </div>
+          <div>
+            <label>종료 시각</label>
+            <input type="time" id="bulk-end" value="11:00" step="600" />
+          </div>
+          <div class="full">
+            <label>요일 선택</label>
+            <div class="weekday-row" id="weekday-row">
+              <button class="wd-chip" data-wd="1">월</button>
+              <button class="wd-chip" data-wd="2">화</button>
+              <button class="wd-chip" data-wd="3">수</button>
+              <button class="wd-chip" data-wd="4">목</button>
+              <button class="wd-chip" data-wd="5">금</button>
+              <button class="wd-chip" data-wd="6">토</button>
+              <button class="wd-chip" data-wd="0">일</button>
+            </div>
+          </div>
+          <div>
+            <label>슬롯 길이</label>
+            <select id="bulk-len">
+              <option value="20">20분</option>
+              <option value="30">30분</option>
+              <option value="40">40분</option>
+              <option value="60">60분</option>
+            </select>
+          </div>
+          <div class="full">
+            <button id="add-bulk" style="width:100%;padding:10px;background:var(--accent);color:var(--bg);border:none;border-radius:var(--radius);cursor:pointer;font-weight:600;">일괄 등록</button>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="panel">
+      <h3>등록된 슬롯</h3>
+      <p class="sub">예약된 슬롯은 삭제할 수 없습니다 (먼저 예약 취소 필요)</p>
+      <div class="filter-row">
+        <input type="date" id="slot-filter-from" />
+        <input type="date" id="slot-filter-to" />
+        <button class="export-btn" id="slot-filter-btn">조회</button>
+      </div>
+      <div id="slot-list"></div>
+    </div>
+
+  </section>
+
+  <!-- Bookings tab -->
+  <section id="tab-bookings" style="display:none;">
+
+    <div class="panel">
+      <h3>예약 목록</h3>
+      <p class="sub">학번, 이름, 카테고리로 필터링 가능</p>
+
+      <div class="filter-row">
+        <input type="date" id="b-from" />
+        <input type="date" id="b-to" />
+        <input type="text" id="b-keyword" placeholder="학번/이름/카테고리 검색" />
+        <button class="export-btn" id="b-refresh">조회</button>
+        <button class="export-btn" id="b-export" style="background:var(--accent);">CSV 내보내기</button>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="bookings-table" id="b-table">
+          <thead>
+            <tr>
+              <th>일시</th>
+              <th>형태</th>
+              <th>신청자</th>
+              <th>카테고리</th>
+              <th>흥미분야</th>
+              <th>요청사항</th>
+              <th>접수</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="b-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const API_URL = "https://script.google.com/macros/s/REPLACE_WITH_YOUR_DEPLOYMENT_ID/exec";
+
+// ============================================================
+// Login
+// ============================================================
+const SESSION_KEY = "advisor_admin_token";
+let adminToken = sessionStorage.getItem(SESSION_KEY) || "";
+
+function showApp() {
+  document.getElementById("login").style.display = "none";
+  document.getElementById("app").style.display = "";
+  loadStats();
+  refreshSlots();
+}
+
+document.getElementById("pw-btn").addEventListener("click", tryLogin);
+document.getElementById("pw-input").addEventListener("keydown", e => {
+  if (e.key === "Enter") tryLogin();
+});
+
+async function tryLogin() {
+  const pw = document.getElementById("pw-input").value.trim();
+  if (!pw) return;
+  document.getElementById("pw-err").textContent = "";
+  try {
+    const res = await postJSON({ action: "auth", password: pw });
+    if (res.ok) {
+      adminToken = pw;
+      sessionStorage.setItem(SESSION_KEY, pw);
+      showApp();
+    } else {
+      document.getElementById("pw-err").textContent = res.error || "비밀번호가 올바르지 않습니다.";
+    }
+  } catch (e) {
+    document.getElementById("pw-err").textContent = "서버 연결 실패";
+  }
+}
+
+document.getElementById("logout").addEventListener("click", () => {
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+});
+
+if (adminToken) {
+  // verify token still works
+  postJSON({ action: "auth", password: adminToken }).then(r => {
+    if (r.ok) showApp();
+    else { sessionStorage.removeItem(SESSION_KEY); }
+  }).catch(() => {});
+}
+
+// ============================================================
+// Tabs
+// ============================================================
+document.querySelectorAll(".tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    btn.classList.add("active");
+    const tab = btn.dataset.tab;
+    document.getElementById("tab-slots").style.display = tab === "slots" ? "" : "none";
+    document.getElementById("tab-bookings").style.display = tab === "bookings" ? "" : "none";
+    if (tab === "bookings") refreshBookings();
+  });
+});
+
+// ============================================================
+// Stats
+// ============================================================
+async function loadStats() {
+  const res = await postJSON({ action: "stats", token: adminToken });
+  if (!res.ok) return;
+  const wrap = document.getElementById("stats");
+  wrap.innerHTML = `
+    <div class="stat">
+      <div class="stat-label">전체 슬롯</div>
+      <div class="stat-value">${res.totalSlots}</div>
+      <div class="stat-sub">개</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">예약된 슬롯</div>
+      <div class="stat-value">${res.bookedSlots}</div>
+      <div class="stat-sub">${res.totalSlots > 0 ? Math.round(res.bookedSlots / res.totalSlots * 100) : 0}% 사용</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">총 예약 건</div>
+      <div class="stat-value">${res.totalBookings}</div>
+      <div class="stat-sub">개인 ${res.soloCount} · 공동 ${res.groupCount}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">상담 학생 수</div>
+      <div class="stat-value">${res.studentCount}</div>
+      <div class="stat-sub">명</div>
+    </div>
+  `;
+}
+
+// ============================================================
+// Slot creation
+// ============================================================
+document.getElementById("single-date").value = new Date().toISOString().split("T")[0];
+
+document.getElementById("add-single").addEventListener("click", async () => {
+  const date = document.getElementById("single-date").value;
+  const start = document.getElementById("single-start").value;
+  const end = document.getElementById("single-end").value;
+  const len = +document.getElementById("single-len").value;
+  if (!date || !start || !end) return toast("모든 필드를 입력하세요.", "error");
+
+  const slots = expandSlots(start, end, len);
+  if (slots.length === 0) return toast("시작/종료 시각을 확인하세요.", "error");
+
+  const res = await postJSON({
+    action: "addSlots",
+    token: adminToken,
+    slots: slots.map(t => ({ date, time: t }))
+  });
+  if (res.ok) {
+    toast(`${res.added}개 슬롯 추가, ${res.skipped}개 중복 건너뜀`, "success");
+    refreshSlots();
+    loadStats();
+  } else toast(res.error || "추가 실패", "error");
+});
+
+const selectedWd = new Set();
+document.querySelectorAll(".wd-chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    const w = +chip.dataset.wd;
+    if (selectedWd.has(w)) {
+      selectedWd.delete(w);
+      chip.classList.remove("active");
+    } else {
+      selectedWd.add(w);
+      chip.classList.add("active");
+    }
+  });
+});
+
+document.getElementById("add-bulk").addEventListener("click", async () => {
+  const from = document.getElementById("bulk-from").value;
+  const to = document.getElementById("bulk-to").value;
+  const start = document.getElementById("bulk-start").value;
+  const end = document.getElementById("bulk-end").value;
+  const len = +document.getElementById("bulk-len").value;
+  if (!from || !to || !start || !end || selectedWd.size === 0) {
+    return toast("모든 필드와 요일을 선택하세요.", "error");
+  }
+
+  const slots = [];
+  const times = expandSlots(start, end, len);
+  const cur = new Date(from);
+  const stop = new Date(to);
+  while (cur <= stop) {
+    if (selectedWd.has(cur.getDay())) {
+      const dateStr = cur.toISOString().split("T")[0];
+      times.forEach(t => slots.push({ date: dateStr, time: t }));
+    }
+    cur.setDate(cur.getDate() + 1);
+  }
+
+  if (slots.length === 0) return toast("생성할 슬롯이 없습니다.", "error");
+  const res = await postJSON({ action: "addSlots", token: adminToken, slots });
+  if (res.ok) {
+    toast(`${res.added}개 슬롯 추가, ${res.skipped}개 중복 건너뜀`, "success");
+    refreshSlots();
+    loadStats();
+  } else toast(res.error || "추가 실패", "error");
+});
+
+function expandSlots(start, end, len) {
+  const [sh, sm] = start.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+  const startMin = sh * 60 + sm;
+  const endMin = eh * 60 + em;
+  const out = [];
+  for (let t = startMin; t + len <= endMin; t += len) {
+    const h = Math.floor(t / 60);
+    const m = t % 60;
+    const h2 = Math.floor((t + len) / 60);
+    const m2 = (t + len) % 60;
+    out.push(`${pad(h)}:${pad(m)} - ${pad(h2)}:${pad(m2)}`);
+  }
+  return out;
+}
+function pad(n) { return String(n).padStart(2, "0"); }
+
+// ============================================================
+// Slot list
+// ============================================================
+document.getElementById("slot-filter-btn").addEventListener("click", refreshSlots);
+
+async function refreshSlots() {
+  const from = document.getElementById("slot-filter-from").value;
+  const to = document.getElementById("slot-filter-to").value;
+  const res = await postJSON({ action: "listSlots", token: adminToken, from, to });
+  const box = document.getElementById("slot-list");
+  if (!res.ok) { box.innerHTML = `<p class="empty">조회 실패</p>`; return; }
+  if (!res.slots || res.slots.length === 0) {
+    box.innerHTML = `<p class="empty">등록된 슬롯이 없습니다.</p>`;
+    return;
+  }
+
+  let html = `<table class="slot-table">
+    <thead><tr><th>날짜</th><th>시간</th><th>상태</th><th></th></tr></thead><tbody>`;
+  res.slots.forEach(s => {
+    html += `<tr>
+      <td>${s.date}</td>
+      <td>${s.time}</td>
+      <td>${s.taken ? '<span class="badge taken">예약됨</span>' : '<span class="badge open">예약가능</span>'}</td>
+      <td>${s.taken ? '' : `<button class="del-btn" data-id="${s.id}">삭제</button>`}</td>
+    </tr>`;
+  });
+  html += `</tbody></table>`;
+  box.innerHTML = html;
+
+  box.querySelectorAll("[data-id]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("이 슬롯을 삭제하시겠습니까?")) return;
+      const r = await postJSON({ action: "deleteSlot", token: adminToken, slotId: btn.dataset.id });
+      if (r.ok) { toast("삭제 완료", "success"); refreshSlots(); loadStats(); }
+      else toast(r.error || "삭제 실패", "error");
+    });
+  });
+}
+
+// ============================================================
+// Bookings
+// ============================================================
+let bookingCache = [];
+
+document.getElementById("b-refresh").addEventListener("click", refreshBookings);
+document.getElementById("b-keyword").addEventListener("input", renderBookings);
+document.getElementById("b-export").addEventListener("click", exportCSV);
+
+async function refreshBookings() {
+  const from = document.getElementById("b-from").value;
+  const to = document.getElementById("b-to").value;
+  const res = await postJSON({ action: "listBookings", token: adminToken, from, to });
+  if (!res.ok) {
+    document.getElementById("b-body").innerHTML = `<tr><td colspan="8" class="empty">조회 실패</td></tr>`;
+    return;
+  }
+  bookingCache = res.bookings || [];
+  renderBookings();
+}
+
+function renderBookings() {
+  const kw = document.getElementById("b-keyword").value.toLowerCase().trim();
+  const body = document.getElementById("b-body");
+  let list = bookingCache;
+  if (kw) {
+    list = list.filter(b => {
+      const blob = (
+        b.date + b.time +
+        b.members.map(m => m.id + m.name).join(" ") +
+        b.categories.join(" ") +
+        (b.interest || "")
+      ).toLowerCase();
+      return blob.includes(kw);
+    });
+  }
+  if (list.length === 0) {
+    body.innerHTML = `<tr><td colspan="8" class="empty">예약 내역이 없습니다.</td></tr>`;
+    return;
+  }
+  body.innerHTML = list.map(b => `
+    <tr>
+      <td><strong>${b.date}</strong><br><span style="color:var(--ink-mute);font-size:12px;">${b.time}</span></td>
+      <td><span class="tag ${b.mode}">${b.mode === "group" ? "공동 " + b.members.length + "명" : "개인"}</span></td>
+      <td>${b.members.map(m => `${m.name}<br><span style="color:var(--ink-mute);font-size:11px;">${m.id}</span>`).join("<hr style='border:none;border-top:1px dashed var(--line);margin:4px 0;'>")}</td>
+      <td>${b.categories.map(c => `<span class="tag">${c}</span>`).join("")}</td>
+      <td style="max-width:160px;font-size:12px;color:var(--ink-soft);">${escapeHtml(b.interest || "—")}</td>
+      <td style="max-width:160px;font-size:12px;color:var(--ink-soft);">${escapeHtml(b.memo || "—")}</td>
+      <td style="font-size:11px;color:var(--ink-mute);">${b.createdAt}</td>
+      <td><button class="del-btn" data-bookingid="${b.bookingId}">취소</button></td>
+    </tr>
+  `).join("");
+
+  body.querySelectorAll("[data-bookingid]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("이 예약을 취소하시겠습니까?")) return;
+      const r = await postJSON({ action: "adminCancel", token: adminToken, bookingId: btn.dataset.bookingid });
+      if (r.ok) {
+        toast("취소 완료", "success");
+        refreshBookings();
+        refreshSlots();
+        loadStats();
+      } else toast(r.error || "취소 실패", "error");
+    });
+  });
+}
+
+function exportCSV() {
+  if (bookingCache.length === 0) return toast("내보낼 데이터가 없습니다.", "error");
+  const head = ["예약ID","날짜","시간","형태","인원수","학번","이름","카테고리","흥미분야","요청사항","접수일시"];
+  const rows = [head];
+  bookingCache.forEach(b => {
+    b.members.forEach((m, i) => {
+      rows.push([
+        i === 0 ? b.bookingId : "",
+        i === 0 ? b.date : "",
+        i === 0 ? b.time : "",
+        i === 0 ? (b.mode === "group" ? "공동" : "개인") : "",
+        i === 0 ? b.members.length : "",
+        m.id, m.name,
+        i === 0 ? b.categories.join(" / ") : "",
+        i === 0 ? (b.interest || "") : "",
+        i === 0 ? (b.memo || "") : "",
+        i === 0 ? b.createdAt : ""
+      ]);
+    });
+  });
+  const csv = "\uFEFF" + rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `bookings_${new Date().toISOString().split("T")[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// Helpers
+// ============================================================
+async function postJSON(payload) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: { "Content-Type": "text/plain;charset=utf-8" }
+  });
+  return res.json();
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+  );
+}
+
+function toast(msg, kind) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast show " + (kind || "");
+  setTimeout(() => { t.className = "toast " + (kind || ""); }, 2800);
+}
+</script>
+
+</body>
+</html>

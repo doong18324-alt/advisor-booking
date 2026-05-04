@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>평생지도교수제 학생상담 예약</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+:root {
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --ink: #1A2433;
+  --ink-soft: #4A5568;
+  --ink-mute: #8B95A5;
+  --line: #E5E1D8;
+  --line-soft: #EFEBE2;
+  --accent: #2C5F4F;
+  --accent-soft: #E8F0EC;
+  --accent-deep: #1A3D32;
+  --gold: #B8924A;
+  --warn: #C2701A;
+  --warn-soft: #FBEDD9;
+  --danger: #B43E3E;
+  --danger-soft: #F7DEDE;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --serif: 'Fraunces', 'Noto Serif KR', serif;
+  --sans: 'Pretendard', -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: inherit; }
+input, select, textarea { font-family: inherit; font-size: 14px; }
+
+.shell {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+/* Header */
+.brand {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+}
+.brand-left h1 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+.brand-left p {
+  font-size: 13px;
+  color: var(--ink-mute);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+.brand-right {
+  text-align: right;
+  font-size: 12px;
+  color: var(--ink-mute);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.brand-right span { display: block; }
+.brand-right .dept {
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+/* Tab nav */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 28px;
+}
+.tab {
+  background: transparent;
+  border: none;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--ink-mute);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.tab:hover { color: var(--ink-soft); }
+.tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 500;
+}
+
+/* Section heading */
+.eyebrow {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+  margin: 0 0 6px;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0 0 20px;
+  letter-spacing: -0.005em;
+}
+
+/* Calendar */
+.calendar {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px 24px;
+}
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.cal-head h3 {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+.cal-nav {
+  display: flex;
+  gap: 6px;
+}
+.cal-nav button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line);
+  background: transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--ink-soft);
+  font-size: 14px;
+  transition: all 0.15s;
+}
+.cal-nav button:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-dow {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  text-align: center;
+  padding: 8px 0;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.cal-dow.sun { color: var(--danger); }
+.cal-dow.sat { color: var(--accent); }
+.cal-day {
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  position: relative;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+  user-select: none;
+}
+.cal-day .num { font-weight: 500; }
+.cal-day .slots {
+  font-size: 10px;
+  margin-top: 2px;
+  opacity: 0.85;
+  letter-spacing: 0.02em;
+}
+.cal-day.empty { color: var(--ink-mute); cursor: default; opacity: 0.35; }
+.cal-day.has-slots-many { background: #EAF1ED; color: #1A3D32; }
+.cal-day.has-slots-few  { background: #FBEDD9; color: #6B3E0E; }
+.cal-day.has-slots-full { background: #F2E3E3; color: #7A2424; cursor: not-allowed; }
+.cal-day.has-slots-many:hover, .cal-day.has-slots-few:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.cal-day.selected {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent-deep);
+}
+.cal-day.selected .slots { opacity: 1; color: #D4E5DD; }
+.cal-day.today::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 12px;
+  color: var(--ink-mute);
+  letter-spacing: 0.02em;
+}
+.legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+/* Slot list */
+.slot-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px 24px;
+  margin-top: 24px;
+}
+.slot-panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.slot-panel-head h3 {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+}
+.slot-panel-head p {
+  font-size: 12px;
+  color: var(--ink-mute);
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+.slot {
+  padding: 12px 14px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  font-variant-numeric: tabular-nums;
+}
+.slot:hover:not(:disabled):not(.taken) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.slot.selected {
+  background: var(--accent);
+  border-color: var(--accent-deep);
+  color: #fff;
+  font-weight: 500;
+}
+.slot.taken {
+  background: #FAF7F0;
+  color: var(--ink-mute);
+  cursor: not-allowed;
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.slot-empty {
+  color: var(--ink-mute);
+  font-size: 13px;
+  text-align: center;
+  padding: 32px 0;
+  font-style: italic;
+}
+
+/* Form */
+.form-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-top: 24px;
+}
+.form-panel h3 {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+.form-panel .sub {
+  font-size: 13px;
+  color: var(--ink-mute);
+  margin: 0 0 24px;
+}
+
+.field { margin-bottom: 22px; }
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.field-label .req { color: var(--danger); margin-left: 2px; }
+.field-hint {
+  font-size: 11px;
+  color: var(--ink-mute);
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+}
+
+input[type="text"], input[type="password"], textarea, select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #FAFAF7;
+  color: var(--ink);
+  transition: border-color 0.15s, background 0.15s;
+}
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: #fff;
+}
+textarea { resize: vertical; min-height: 64px; }
+
+.toggle-group {
+  display: flex;
+  gap: 8px;
+}
+.toggle-btn {
+  flex: 1;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink-soft);
+  transition: all 0.15s;
+}
+.toggle-btn:hover { border-color: var(--accent); }
+.toggle-btn.active {
+  background: var(--accent);
+  border-color: var(--accent-deep);
+  color: #fff;
+  font-weight: 500;
+}
+
+.member-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+.member-row .lead-tag {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+}
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--ink-mute);
+  font-size: 16px;
+  transition: all 0.15s;
+}
+.icon-btn:hover {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.add-member-btn {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s;
+  margin-top: 4px;
+}
+.add-member-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.add-member-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: transparent;
+  color: var(--ink-soft);
+  letter-spacing: 0.01em;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.chip.active {
+  background: var(--accent);
+  border-color: var(--accent-deep);
+  color: #fff;
+  font-weight: 500;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--accent);
+  border: 1px solid var(--accent-deep);
+  border-radius: var(--radius);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.15s;
+}
+.submit-btn:hover { background: var(--accent-deep); }
+.submit-btn:disabled {
+  background: var(--ink-mute);
+  border-color: var(--ink-mute);
+  cursor: not-allowed;
+}
+
+/* Cancel tab */
+.cancel-search {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.cancel-search .row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+.search-btn {
+  padding: 10px 22px;
+  background: var(--accent);
+  border: 1px solid var(--accent-deep);
+  border-radius: var(--radius);
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.search-btn:hover { background: var(--accent-deep); }
+
+.booking-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+}
+.booking-info .when {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+.booking-info .who {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: 0 0 4px;
+}
+.booking-info .meta {
+  font-size: 12px;
+  color: var(--ink-mute);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+.cancel-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.cancel-btn:hover { background: var(--danger); color: #fff; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 1000;
+  max-width: 90%;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.toast.error { background: var(--danger); }
+.toast.success { background: var(--accent-deep); }
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--ink-mute);
+  font-style: italic;
+  font-family: var(--serif);
+}
+
+/* Confirmation modal */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 36, 51, 0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 24px;
+}
+.modal-bg.show { display: flex; }
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  max-width: 440px;
+  width: 100%;
+}
+.modal h3 {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 12px;
+}
+.modal p {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin: 0 0 20px;
+  line-height: 1.6;
+}
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.modal-actions button {
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+  border: 1px solid var(--line);
+  background: transparent;
+}
+.modal-actions .primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent-deep);
+}
+
+@media (max-width: 600px) {
+  .shell { padding: 28px 16px 60px; }
+  .brand { flex-direction: column; }
+  .brand-right { text-align: left; }
+  .cancel-search .row { grid-template-columns: 1fr; }
+  .booking-card { flex-direction: column; align-items: flex-start; }
+  .form-panel { padding: 22px 18px; }
+  .calendar, .slot-panel { padding: 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <header class="brand">
+    <div class="brand-left">
+      <h1>평생지도교수제 학생상담</h1>
+      <p>Lifelong Academic Advising · 사전 예약 시스템</p>
+    </div>
+    <div class="brand-right">
+      <span class="dept">광주보건대학교</span>
+      <span>운동처방학과</span>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="book">예약하기</button>
+    <button class="tab" data-tab="cancel">예약 확인 / 취소</button>
+  </nav>
+
+  <!-- BOOKING TAB -->
+  <section id="tab-book">
+    <p class="eyebrow">Step 01</p>
+    <h2 class="section-title">상담 일자 선택</h2>
+
+    <div class="calendar">
+      <div class="cal-head">
+        <h3 id="cal-title">— 년 — 월</h3>
+        <div class="cal-nav">
+          <button id="cal-prev" aria-label="이전 달">‹</button>
+          <button id="cal-today">오늘</button>
+          <button id="cal-next" aria-label="다음 달">›</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-swatch" style="background:#EAF1ED"></span>여유</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:#FBEDD9"></span>마감 임박</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:#F2E3E3"></span>마감</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:var(--accent)"></span>선택</span>
+      </div>
+    </div>
+
+    <div class="slot-panel" id="slot-panel" style="display:none;">
+      <div class="slot-panel-head">
+        <h3 id="slot-date">시간 선택</h3>
+        <p>20분 단위 · 선착순</p>
+      </div>
+      <div class="slot-grid" id="slot-grid"></div>
+    </div>
+
+    <div class="form-panel" id="form-panel" style="display:none;">
+      <h3>예약 정보 입력</h3>
+      <p class="sub" id="form-when-label">선택된 시간이 표시됩니다</p>
+
+      <div class="field">
+        <label class="field-label">상담 형태<span class="req">*</span></label>
+        <div class="toggle-group">
+          <button class="toggle-btn active" data-form="solo">개인 상담</button>
+          <button class="toggle-btn" data-form="group">공동 상담 (최대 4인)</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">신청자 정보<span class="req">*</span></label>
+        <div id="member-list"></div>
+        <button class="add-member-btn" id="add-member-btn" style="display:none;">+ 인원 추가</button>
+        <p class="field-hint" id="member-hint">개인 상담 시 본인 학번·이름만 입력하면 됩니다.</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label">상담 카테고리<span class="req">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-mute);">(다중 선택)</span></label>
+        <div class="chip-group" id="category-chips"></div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">흥미분야 / 관심 주제</label>
+        <textarea id="interest-text" placeholder="관심 있는 분야나 탐색하고 싶은 주제를 자유롭게 적어주세요. (예: 시니어 운동처방, 스포츠손상 재활, 운동검사 자격증 등)"></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field-label">사전 요청 사항 <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-mute);">(선택)</span></label>
+        <textarea id="memo" placeholder="교수님께 미리 전달하고 싶은 내용이 있다면 작성해주세요."></textarea>
+      </div>
+
+      <button class="submit-btn" id="submit-btn">예약 신청</button>
+    </div>
+  </section>
+
+  <!-- CANCEL TAB -->
+  <section id="tab-cancel" style="display:none;">
+    <p class="eyebrow">Lookup</p>
+    <h2 class="section-title">예약 확인 및 취소</h2>
+
+    <div class="cancel-search">
+      <div class="row">
+        <div>
+          <label class="field-label">학번</label>
+          <input type="text" id="cancel-id" placeholder="예: 2024123456" />
+        </div>
+        <div>
+          <label class="field-label">이름</label>
+          <input type="text" id="cancel-name" placeholder="홍길동" />
+        </div>
+        <button class="search-btn" id="cancel-search-btn">조회</button>
+      </div>
+    </div>
+
+    <div id="cancel-results"></div>
+  </section>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3 id="modal-title">확인</h3>
+    <p id="modal-msg"></p>
+    <div class="modal-actions">
+      <button id="modal-cancel">취소</button>
+      <button class="primary" id="modal-ok">확인</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG — Google Apps Script 배포 후 URL을 여기 넣으세요.
+// ============================================================
+const API_URL = "https://script.google.com/macros/s/REPLACE_WITH_YOUR_DEPLOYMENT_ID/exec";
+
+const CATEGORIES = [
+  "학업 관련", "진로·취업", "자격증", "대학원 진학",
+  "학교생활 적응", "심리·정서", "경제·생활", "건강 관리",
+  "흥미분야", "기타·행정"
+];
+
+// ============================================================
+// State
+// ============================================================
+const state = {
+  view: new Date(),
+  today: new Date(),
+  selectedDate: null,
+  selectedSlot: null,
+  slotsByDate: {},          // { 'YYYY-MM-DD': [ {id, time, taken} ] }
+  formMode: "solo",
+  members: [{ id: "", name: "" }],
+  categories: new Set(),
+};
+state.today.setHours(0, 0, 0, 0);
+
+// ============================================================
+// Tabs
+// ============================================================
+document.querySelectorAll(".tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    btn.classList.add("active");
+    const tab = btn.dataset.tab;
+    document.getElementById("tab-book").style.display = tab === "book" ? "" : "none";
+    document.getElementById("tab-cancel").style.display = tab === "cancel" ? "" : "none";
+  });
+});
+
+// ============================================================
+// Calendar
+// ============================================================
+const dowKor = ["일","월","화","수","목","금","토"];
+function ymd(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${dd}`;
+}
+function fmtDate(d) {
+  return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 (${dowKor[d.getDay()]})`;
+}
+
+async function renderCalendar() {
+  const v = state.view;
+  const y = v.getFullYear(), m = v.getMonth();
+  document.getElementById("cal-title").textContent = `${y}년 ${m + 1}월`;
+
+  const first = new Date(y, m, 1);
+  const last = new Date(y, m + 1, 0);
+  const startDow = first.getDay();
+  const totalDays = last.getDate();
+
+  const grid = document.getElementById("cal-grid");
+  grid.innerHTML = "";
+
+  ["일","월","화","수","목","금","토"].forEach((d, i) => {
+    const div = document.createElement("div");
+    div.className = "cal-dow" + (i === 0 ? " sun" : i === 6 ? " sat" : "");
+    div.textContent = d;
+    grid.appendChild(div);
+  });
+
+  const fromDate = ymd(new Date(y, m, 1));
+  const toDate = ymd(new Date(y, m, totalDays));
+  const slotMap = await fetchSlots(fromDate, toDate);
+  state.slotsByDate = slotMap;
+
+  for (let i = 0; i < startDow; i++) {
+    const d = document.createElement("div");
+    d.className = "cal-day empty";
+    grid.appendChild(d);
+  }
+
+  for (let day = 1; day <= totalDays; day++) {
+    const dateObj = new Date(y, m, day);
+    const key = ymd(dateObj);
+    const slots = slotMap[key] || [];
+    const available = slots.filter(s => !s.taken).length;
+
+    const div = document.createElement("div");
+    div.className = "cal-day";
+    if (dateObj.getTime() === state.today.getTime()) div.classList.add("today");
+    if (dateObj < state.today) {
+      div.classList.add("empty");
+    } else if (slots.length === 0) {
+      div.classList.add("empty");
+    } else if (available === 0) {
+      div.classList.add("has-slots-full");
+    } else if (available <= 2) {
+      div.classList.add("has-slots-few");
+    } else {
+      div.classList.add("has-slots-many");
+    }
+
+    div.innerHTML = `<span class="num">${day}</span>` +
+      (slots.length > 0 && dateObj >= state.today
+        ? `<span class="slots">${available === 0 ? "마감" : available + "자리"}</span>`
+        : "");
+
+    if (slots.length > 0 && available > 0 && dateObj >= state.today) {
+      div.addEventListener("click", () => selectDate(dateObj, key));
+    }
+
+    if (state.selectedDate === key) div.classList.add("selected");
+    grid.appendChild(div);
+  }
+}
+
+document.getElementById("cal-prev").addEventListener("click", () => {
+  state.view = new Date(state.view.getFullYear(), state.view.getMonth() - 1, 1);
+  renderCalendar();
+});
+document.getElementById("cal-next").addEventListener("click", () => {
+  state.view = new Date(state.view.getFullYear(), state.view.getMonth() + 1, 1);
+  renderCalendar();
+});
+document.getElementById("cal-today").addEventListener("click", () => {
+  state.view = new Date();
+  renderCalendar();
+});
+
+function selectDate(dateObj, key) {
+  state.selectedDate = key;
+  state.selectedSlot = null;
+  document.querySelectorAll(".cal-day.selected").forEach(d => d.classList.remove("selected"));
+  event.currentTarget.classList.add("selected");
+  renderSlots(dateObj);
+  document.getElementById("form-panel").style.display = "none";
+}
+
+function renderSlots(dateObj) {
+  const panel = document.getElementById("slot-panel");
+  const grid = document.getElementById("slot-grid");
+  const dateLabel = document.getElementById("slot-date");
+  panel.style.display = "";
+  dateLabel.textContent = fmtDate(dateObj);
+
+  const slots = state.slotsByDate[ymd(dateObj)] || [];
+  grid.innerHTML = "";
+
+  if (slots.length === 0) {
+    grid.innerHTML = `<p class="slot-empty">등록된 시간 슬롯이 없습니다.</p>`;
+    return;
+  }
+
+  slots.forEach(slot => {
+    const btn = document.createElement("button");
+    btn.className = "slot" + (slot.taken ? " taken" : "");
+    btn.textContent = slot.time;
+    btn.disabled = slot.taken;
+    if (!slot.taken) {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".slot.selected").forEach(s => s.classList.remove("selected"));
+        btn.classList.add("selected");
+        state.selectedSlot = slot;
+        showForm(dateObj, slot);
+      });
+    }
+    grid.appendChild(btn);
+  });
+}
+
+// ============================================================
+// Form
+// ============================================================
+function showForm(dateObj, slot) {
+  const panel = document.getElementById("form-panel");
+  panel.style.display = "";
+  document.getElementById("form-when-label").textContent =
+    `${fmtDate(dateObj)} · ${slot.time}`;
+  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+document.querySelectorAll("[data-form]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("[data-form]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.formMode = btn.dataset.form;
+    if (state.formMode === "solo") {
+      state.members = [{ id: state.members[0]?.id || "", name: state.members[0]?.name || "" }];
+      document.getElementById("add-member-btn").style.display = "none";
+      document.getElementById("member-hint").textContent =
+        "개인 상담 시 본인 학번·이름만 입력하면 됩니다.";
+    } else {
+      if (state.members.length < 2) {
+        state.members.push({ id: "", name: "" });
+      }
+      document.getElementById("add-member-btn").style.display = "";
+      document.getElementById("member-hint").textContent =
+        "대표자 1명 + 추가 인원 (최대 3명). 첫 행이 대표자입니다.";
+    }
+    renderMembers();
+  });
+});
+
+function renderMembers() {
+  const list = document.getElementById("member-list");
+  list.innerHTML = "";
+  state.members.forEach((mem, idx) => {
+    const row = document.createElement("div");
+    row.className = "member-row";
+    const isLead = idx === 0 && state.formMode === "group";
+    row.innerHTML = `
+      <input type="text" placeholder="학번" value="${mem.id}" data-idx="${idx}" data-key="id" />
+      <input type="text" placeholder="이름${isLead ? " (대표자)" : ""}" value="${mem.name}" data-idx="${idx}" data-key="name" />
+      ${state.members.length > 1
+        ? `<button class="icon-btn" data-remove="${idx}" title="삭제">×</button>`
+        : `<span></span>`}
+    `;
+    list.appendChild(row);
+  });
+  list.querySelectorAll("input").forEach(inp => {
+    inp.addEventListener("input", e => {
+      const i = +e.target.dataset.idx;
+      const k = e.target.dataset.key;
+      state.members[i][k] = e.target.value.trim();
+    });
+  });
+  list.querySelectorAll("[data-remove]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const i = +btn.dataset.remove;
+      state.members.splice(i, 1);
+      renderMembers();
+      document.getElementById("add-member-btn").disabled = false;
+    });
+  });
+  document.getElementById("add-member-btn").disabled = state.members.length >= 4;
+}
+
+document.getElementById("add-member-btn").addEventListener("click", () => {
+  if (state.members.length < 4) {
+    state.members.push({ id: "", name: "" });
+    renderMembers();
+  }
+});
+
+// Categories
+const chipBox = document.getElementById("category-chips");
+CATEGORIES.forEach(cat => {
+  const chip = document.createElement("button");
+  chip.className = "chip";
+  chip.type = "button";
+  chip.textContent = cat;
+  chip.addEventListener("click", () => {
+    if (state.categories.has(cat)) {
+      state.categories.delete(cat);
+      chip.classList.remove("active");
+    } else {
+      state.categories.add(cat);
+      chip.classList.add("active");
+    }
+  });
+  chipBox.appendChild(chip);
+});
+
+renderMembers();
+
+// ============================================================
+// Submit
+// ============================================================
+document.getElementById("submit-btn").addEventListener("click", async () => {
+  if (!state.selectedDate || !state.selectedSlot) {
+    return toast("날짜와 시간을 선택해주세요.", "error");
+  }
+  const validMembers = state.members.filter(m => m.id && m.name);
+  if (validMembers.length === 0) {
+    return toast("학번과 이름을 입력해주세요.", "error");
+  }
+  if (state.formMode === "group" && validMembers.length < 2) {
+    return toast("공동 상담은 최소 2명이 필요합니다.", "error");
+  }
+  if (state.categories.size === 0) {
+    return toast("상담 카테고리를 1개 이상 선택해주세요.", "error");
+  }
+
+  const payload = {
+    action: "book",
+    slotId: state.selectedSlot.id,
+    date: state.selectedDate,
+    time: state.selectedSlot.time,
+    mode: state.formMode,
+    members: validMembers,
+    categories: [...state.categories],
+    interest: document.getElementById("interest-text").value.trim(),
+    memo: document.getElementById("memo").value.trim(),
+  };
+
+  const btn = document.getElementById("submit-btn");
+  btn.disabled = true;
+  btn.textContent = "신청 중…";
+  try {
+    const res = await postJSON(payload);
+    if (res.ok) {
+      toast("예약이 접수되었습니다.", "success");
+      resetForm();
+      await renderCalendar();
+      document.getElementById("slot-panel").style.display = "none";
+      document.getElementById("form-panel").style.display = "none";
+    } else {
+      toast(res.error || "예약에 실패했습니다. 다시 시도해주세요.", "error");
+    }
+  } catch (e) {
+    toast("서버 연결 실패. 잠시 후 다시 시도해주세요.", "error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "예약 신청";
+  }
+});
+
+function resetForm() {
+  state.selectedDate = null;
+  state.selectedSlot = null;
+  state.members = [{ id: "", name: "" }];
+  state.categories.clear();
+  state.formMode = "solo";
+  document.querySelectorAll("[data-form]").forEach(b => {
+    b.classList.toggle("active", b.dataset.form === "solo");
+  });
+  document.getElementById("add-member-btn").style.display = "none";
+  document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+  document.getElementById("interest-text").value = "";
+  document.getElementById("memo").value = "";
+  renderMembers();
+}
+
+// ============================================================
+// Cancel tab
+// ============================================================
+document.getElementById("cancel-search-btn").addEventListener("click", async () => {
+  const id = document.getElementById("cancel-id").value.trim();
+  const name = document.getElementById("cancel-name").value.trim();
+  if (!id || !name) return toast("학번과 이름을 모두 입력해주세요.", "error");
+
+  const box = document.getElementById("cancel-results");
+  box.innerHTML = `<p class="loading">조회 중…</p>`;
+  try {
+    const res = await postJSON({ action: "lookup", id, name });
+    if (!res.ok) {
+      box.innerHTML = `<p class="loading">${res.error || "조회 실패"}</p>`;
+      return;
+    }
+    if (!res.bookings || res.bookings.length === 0) {
+      box.innerHTML = `<p class="loading">예약 내역이 없습니다.</p>`;
+      return;
+    }
+    box.innerHTML = "";
+    res.bookings.forEach(b => {
+      const card = document.createElement("div");
+      card.className = "booking-card";
+      card.innerHTML = `
+        <div class="booking-info">
+          <p class="when">${b.date} · ${b.time}</p>
+          <p class="who">${b.mode === "group" ? "공동 · " + b.memberCount + "명" : "개인"} · ${b.categories.join(", ")}</p>
+          <p class="meta">신청일 ${b.createdAt}</p>
+        </div>
+        <button class="cancel-btn" data-bookingid="${b.bookingId}">예약 취소</button>
+      `;
+      box.appendChild(card);
+    });
+    box.querySelectorAll(".cancel-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        confirmModal("예약을 취소하시겠습니까?", "취소된 예약은 복구할 수 없습니다.", async () => {
+          const r = await postJSON({
+            action: "cancel",
+            bookingId: btn.dataset.bookingid,
+            id, name
+          });
+          if (r.ok) {
+            toast("예약이 취소되었습니다.", "success");
+            document.getElementById("cancel-search-btn").click();
+          } else {
+            toast(r.error || "취소 실패", "error");
+          }
+        });
+      });
+    });
+  } catch (e) {
+    box.innerHTML = `<p class="loading">서버 연결 실패</p>`;
+  }
+});
+
+// ============================================================
+// API helpers
+// ============================================================
+async function postJSON(payload) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: { "Content-Type": "text/plain;charset=utf-8" }
+  });
+  return res.json();
+}
+
+async function fetchSlots(from, to) {
+  try {
+    const res = await fetch(`${API_URL}?action=slots&from=${from}&to=${to}`);
+    const data = await res.json();
+    return data.slotsByDate || {};
+  } catch (e) {
+    console.error(e);
+    return {};
+  }
+}
+
+// ============================================================
+// Toast & Modal
+// ============================================================
+function toast(msg, kind) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast show " + (kind || "");
+  setTimeout(() => { t.className = "toast " + (kind || ""); }, 2800);
+}
+
+let modalCb = null;
+function confirmModal(title, msg, cb) {
+  document.getElementById("modal-title").textContent = title;
+  document.getElementById("modal-msg").textContent = msg;
+  document.getElementById("modal").classList.add("show");
+  modalCb = cb;
+}
+document.getElementById("modal-ok").addEventListener("click", () => {
+  document.getElementById("modal").classList.remove("show");
+  if (modalCb) modalCb();
+});
+document.getElementById("modal-cancel").addEventListener("click", () => {
+  document.getElementById("modal").classList.remove("show");
+  modalCb = null;
+});
+
+// ============================================================
+// Init
+// ============================================================
+renderCalendar();
+</script>
+
+</body>
+</html>
